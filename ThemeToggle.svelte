@@ -1,5 +1,7 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
+
+	type Theme = 'light' | 'dark';
 
 	const ThemeLight =
 		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="currentColor"/><path fill="currentColor" d="M21 13h-1a1 1 0 0 1 0-2h1a1 1 0 0 1 0 2ZM4 13H3a1 1 0 0 1 0-2h1a1 1 0 0 1 0 2Zm13.66-5.66a1 1 0 0 1-.66-.29 1 1 0 0 1 0-1.41l.71-.71a1 1 0 1 1 1.41 1.41l-.71.71a1 1 0 0 1-.75.29ZM5.64 19.36a1 1 0 0 1-.71-.29 1 1 0 0 1 0-1.41l.71-.66a1 1 0 0 1 1.41 1.41l-.71.71a1 1 0 0 1-.7.24ZM12 5a1 1 0 0 1-1-1V3a1 1 0 0 1 2 0v1a1 1 0 0 1-1 1Zm0 17a1 1 0 0 1-1-1v-1a1 1 0 0 1 2 0v1a1 1 0 0 1-1 1ZM6.34 7.34a1 1 0 0 1-.7-.29l-.71-.71a1 1 0 0 1 1.41-1.41l.71.71a1 1 0 0 1 0 1.41 1 1 0 0 1-.71.29Zm12.02 12.02a1 1 0 0 1-.7-.29l-.66-.71A1 1 0 0 1 18.36 17l.71.71a1 1 0 0 1 0 1.41 1 1 0 0 1-.71.24Z"/></svg>';
@@ -10,38 +12,38 @@
 	const THEMES = {
 		LIGHT: 'light',
 		DARK: 'dark'
-	};
+	} as const;
 
 	const LABELS = {
 		LIGHT: 'Change to dark theme',
 		DARK: 'Change to light theme'
-	};
+	} as const;
 
-	let hidden = $state(true);
-	let button = $state(null);
-	let currentThemeSetting = $state(THEMES.LIGHT);
+	let hidden = $state<boolean>(true);
+	let button = $state<HTMLButtonElement | null>(null);
+	let currentThemeSetting = $state<Theme>(THEMES.LIGHT);
 
-	function calculateInitialTheme() {
+	function calculateInitialTheme(): Theme {
 		const savedTheme = localStorage.getItem('theme');
-		if (savedTheme) {
+		if (savedTheme === THEMES.LIGHT || savedTheme === THEMES.DARK) {
 			return savedTheme;
 		}
 		return window.matchMedia('(prefers-color-scheme: light)').matches ? THEMES.LIGHT : THEMES.DARK;
 	}
 
-	function updateButtonLabel(isLight) {
+	function updateButtonLabel(isLight: boolean): void {
 		const label = isLight ? LABELS.LIGHT : LABELS.DARK;
 		button?.setAttribute('aria-label', label);
 	}
 
-	function setTheme(theme) {
+	function setTheme(theme: Theme): void {
 		document.documentElement.setAttribute('data-theme', theme);
 		localStorage.setItem('theme', theme);
 		updateButtonLabel(theme === THEMES.LIGHT);
 		currentThemeSetting = theme;
 	}
 
-	function toggleTheme() {
+	function toggleTheme(): void {
 		const newTheme = currentThemeSetting === THEMES.LIGHT ? THEMES.DARK : THEMES.LIGHT;
 		setTheme(newTheme);
 	}
