@@ -69,10 +69,10 @@
 </button>
 
 <style lang="css">
-	:global([data-theme='{THEMES.LIGHT}']) {
+	:global([data-theme='light']) {
 		--color-theme: #000;
 	}
-	:global([data-theme='{THEMES.DARK}']) {
+	:global([data-theme='dark']) {
 		--color-theme: #fff;
 	}
 
